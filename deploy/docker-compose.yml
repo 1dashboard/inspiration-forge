@@ -1,0 +1,16 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: inspiration-forge
+    network_mode: host
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_FLYWAY_ENABLED: "false"
+    volumes:
+      - ../data/code_output:/app/tmp/code_output
+      - ../data/code_deploy:/app/tmp/code_deploy

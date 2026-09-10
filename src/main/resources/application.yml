@@ -1,0 +1,114 @@
+spring:
+  application:
+    name: inspiration-forge-backend
+  # session 配置
+  session:
+    store-type: redis
+    # session 30 天过期
+    timeout: 2592000
+  # mysql
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/inspiration_forge?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=Asia/Shanghai}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:}
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+    validate-on-migrate: true
+  # redis
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
+      password: ${REDIS_PASSWORD:}
+      ttl: 3600 # 缓存过期时间（秒）
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+server:
+  port: ${SERVER_PORT:8123}
+  servlet:
+    context-path: /api
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+app:
+  security:
+    password-salt: ${USER_PASSWORD_SALT:inspiration-forge}
+# 本地部署作品及截图访问地址
+code:
+  deploy-host: ${DEPLOY_HOST:http://localhost:8123/api/static}
+# springdoc-openapi
+springdoc:
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: io.github.onedashboard.inspirationforge.controller
+# knife4j
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+# AI
+langchain4j:
+  open-ai:
+    chat-model:
+      base-url: https://api.deepseek.com
+      api-key: ${DEEPSEEK_API_KEY:}
+      model-name: deepseek-chat
+#      strict-json-schema: true
+#      response-format: json_object
+      max-tokens: 8192
+      log-requests: true
+      log-responses: true
+      max-retries: 3
+    streaming-chat-model:
+      base-url: https://api.deepseek.com
+      api-key: ${DEEPSEEK_API_KEY:}
+      model-name: deepseek-chat
+      max-tokens: 8192
+      log-requests: true
+      log-responses: true
+    # 推理 AI 模型配置（用于复杂的推理任务）
+    reasoning-streaming-chat-model:
+      # 默认使用已验证支持工具调用的备用代码模型；生产环境可通过以下环境变量覆盖。
+      base-url: https://api.deepseek.com
+      api-key: ${DEEPSEEK_API_KEY:}
+      model-name: ${CODE_MODEL_NAME:deepseek-chat}
+      max-tokens: 32768
+      temperature: 0.1
+      log-requests: true
+      log-responses: true
+    # 智能路由 AI 模型配置（用于简单的分类任务）
+    routing-chat-model:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api-key: ${DASHSCOPE_API_KEY:}
+      model-name: qwen-turbo
+      max-tokens: 100
+      log-requests: false
+      log-responses: false
+# 添加 COS 对象存储配置（需要从腾讯云获取）
+cos:
+  client:
+    host: ${TENCENT_COS_HOST:}
+    secretId: ${TENCENT_COS_SECRET_ID:}
+    secretKey: ${TENCENT_COS_SECRET_KEY:}
+    region: ${TENCENT_COS_REGION:}
+    bucket: ${TENCENT_COS_BUCKET:}
+# Pexels 图片搜索配置
+pexels:
+  api-key: ${PEXELS_API_KEY:}
+# 阿里云 DashScope 配置
+dashscope:
+  api-key: ${DASHSCOPE_API_KEY:}
+  image-model: wan2.2-t2i-flash
+rag:
+  embedding:
+    enabled: ${RAG_EMBEDDING_ENABLED:false}
+    api-key: ${RAG_EMBEDDING_API_KEY:}
+    model: text-embedding-v3
+    dimension: 1024
