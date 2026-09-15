@@ -59,7 +59,8 @@ langchain4j:
     chat-model:
       base-url: https://api.deepseek.com
       api-key: ${DEEPSEEK_API_KEY:}
-      model-name: deepseek-chat
+      model-name: deepseek-flash
+      reasoning-effort: none
 #      strict-json-schema: true
 #      response-format: json_object
       max-tokens: 8192
@@ -69,18 +70,19 @@ langchain4j:
     streaming-chat-model:
       base-url: https://api.deepseek.com
       api-key: ${DEEPSEEK_API_KEY:}
-      model-name: deepseek-chat
+      model-name: deepseek-flash
+      reasoning-effort: none
       max-tokens: 8192
       log-requests: true
       log-responses: true
     # 推理 AI 模型配置（用于复杂的推理任务）
     reasoning-streaming-chat-model:
-      # 默认使用已验证支持工具调用的备用代码模型；生产环境可通过以下环境变量覆盖。
+      # Vue 项目使用思考模式；生产环境可通过以下环境变量覆盖模型和推理强度。
       base-url: https://api.deepseek.com
       api-key: ${DEEPSEEK_API_KEY:}
-      model-name: ${CODE_MODEL_NAME:deepseek-chat}
+      model-name: ${CODE_MODEL_NAME:deepseek-flash}
+      reasoning-effort: ${CODE_REASONING_EFFORT:high}
       max-tokens: 32768
-      temperature: 0.1
       log-requests: true
       log-responses: true
     # 智能路由 AI 模型配置（用于简单的分类任务）

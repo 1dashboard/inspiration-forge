@@ -1,6 +1,7 @@
 package io.github.onedashboard.inspirationforge.config;
 
 import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.openai.OpenAiChatRequestParameters;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -26,6 +27,8 @@ public class StreamingChatModelConfig {
 
     private Double temperature;
 
+    private String reasoningEffort = "none";
+
     private boolean logRequests;
 
     private boolean logResponses;
@@ -42,6 +45,9 @@ public class StreamingChatModelConfig {
                 .modelName(modelName)
                 .maxTokens(maxTokens)
                 .temperature(temperature)
+                .defaultRequestParameters(OpenAiChatRequestParameters.builder()
+                        .reasoningEffort(reasoningEffort)
+                        .build())
                 .logRequests(logRequests)
                 .logResponses(logResponses)
                 .build();

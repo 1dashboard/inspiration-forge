@@ -3,7 +3,9 @@
     <!-- 顶部栏 -->
     <div class="header-bar">
       <div class="header-left">
-        <h1 class="app-name">{{ appInfo?.appName || '网站生成器' }}</h1>
+        <h1 class="app-name" :title="appInfo?.appName || '网站生成器'">
+          {{ appInfo?.appName || '网站生成器' }}
+        </h1>
         <a-tag v-if="appInfo?.codeGenType" color="blue" class="code-gen-type-tag">
           {{ formatCodeGenType(appInfo.codeGenType) }}
         </a-tag>
@@ -54,15 +56,24 @@
             />
           </div>
         </a-tooltip>
-        <a-button type="default" @click="showAppDetail">
+        <a-button
+            class="header-action-button"
+            type="default"
+            aria-label="应用详情"
+            title="应用详情"
+            @click="showAppDetail"
+        >
           <template #icon>
             <InfoCircleOutlined />
           </template>
-          应用详情
+          <span class="header-action-label">应用详情</span>
         </a-button>
         <a-button
+            class="header-action-button"
             type="primary"
             ghost
+            aria-label="下载代码"
+            title="下载代码"
             @click="downloadCode"
             :loading="downloading"
             :disabled="!isOwner"
@@ -70,16 +81,41 @@
           <template #icon>
             <DownloadOutlined />
           </template>
-          下载代码
+          <span class="header-action-label">下载代码</span>
         </a-button>
-        <a-button type="primary" @click="deployApp" :loading="deploying">
+        <a-button
+            class="header-action-button"
+            type="primary"
+            aria-label="部署"
+            title="部署"
+            @click="deployApp"
+            :loading="deploying"
+        >
           <template #icon>
             <CloudUploadOutlined />
           </template>
-          部署
+          <span class="header-action-label">部署</span>
         </a-button>
-        <a-button v-if="appInfo?.deployKey && appInfo.deployStatus === 'RUNNING'" @click="pauseDeployment">暂停</a-button>
-        <a-button v-else-if="appInfo?.deployKey" @click="resumeDeployment">恢复</a-button>
+        <a-button
+            v-if="appInfo?.deployKey && appInfo.deployStatus === 'RUNNING'"
+            class="header-action-button"
+            aria-label="暂停部署"
+            title="暂停部署"
+            @click="pauseDeployment"
+        >
+          <template #icon><PauseCircleOutlined /></template>
+          <span class="header-action-label">暂停</span>
+        </a-button>
+        <a-button
+            v-else-if="appInfo?.deployKey"
+            class="header-action-button"
+            aria-label="恢复部署"
+            title="恢复部署"
+            @click="resumeDeployment"
+        >
+          <template #icon><PlayCircleOutlined /></template>
+          <span class="header-action-label">恢复</span>
+        </a-button>
       </div>
     </div>
 
@@ -743,6 +779,7 @@ import {
   DownloadOutlined,
   EditOutlined,
   PlayCircleOutlined,
+  PauseCircleOutlined,
   DesktopOutlined,
   CodeOutlined,
   SaveOutlined,
@@ -2453,6 +2490,7 @@ onUnmounted(() => {
 }
 
 .header-left {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -2472,13 +2510,18 @@ onUnmounted(() => {
 }
 
 .app-name {
+  min-width: 0;
   margin: 0;
+  overflow: hidden;
   font-size: 18px;
   font-weight: 600;
   color: #1a1a1a;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header-right {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -3527,6 +3570,11 @@ onUnmounted(() => {
 
 /* 响应式设计 */
 @media (max-width: 1024px) {
+  #appChatPage {
+    height: calc(100vh - 68px);
+    height: calc(100dvh - 68px);
+  }
+
   .main-content {
     grid-template-columns: 1fr;
     grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
@@ -3540,8 +3588,8 @@ onUnmounted(() => {
 
   .chat-section,
   .preview-section {
-    flex: none;
-    height: 50vh;
+    height: auto;
+    min-height: 0;
   }
 
   .code-workspace {
@@ -3550,21 +3598,68 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
+  #appChatPage {
+    height: calc(100vh - 58px);
+    height: calc(100dvh - 58px);
+    padding: 8px;
+  }
+
   .header-bar {
-    padding: 12px 16px;
+    flex: 0 0 auto;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .header-left {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .header-right {
+    width: 100%;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .header-right::-webkit-scrollbar,
+  .preview-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .header-action-button {
+    flex: 0 0 32px;
+    width: 32px;
+    padding-inline: 0;
+  }
+
+  .header-action-label {
+    display: none;
   }
 
   .app-name {
+    flex: 1 0 100%;
     font-size: 16px;
   }
 
   .main-content {
-    padding: 8px;
+    grid-template-rows: minmax(380px, 62dvh) minmax(420px, 72dvh);
+    align-content: start;
+    padding: 4px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
     gap: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .preview-header {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
     gap: 8px;
     padding: 8px 10px;
   }
@@ -3573,11 +3668,24 @@ onUnmounted(() => {
     display: none;
   }
 
-  .workspace-switch { grid-column: 1; }
-  .preview-actions { grid-column: 2; }
+  .workspace-switch {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .preview-actions {
+    width: 100%;
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 1px;
+    scrollbar-width: none;
+  }
 
   .code-workspace {
-    grid-template-columns: 148px minmax(0, 1fr);
+    grid-template-columns: 120px minmax(0, 1fr);
   }
 
   .explorer-mode-switch {
@@ -3593,7 +3701,27 @@ onUnmounted(() => {
   }
 
   .message-content {
-    max-width: 85%;
+    min-width: 0;
+    max-width: calc(100% - 42px);
+    overflow-wrap: anywhere;
+  }
+
+  .messages-container,
+  .input-container {
+    padding: 12px;
+  }
+
+  .input-wrapper .ant-input {
+    padding-right: 11px;
+  }
+
+  .input-actions {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
   }
 
   /* 选中元素信息样式 */
